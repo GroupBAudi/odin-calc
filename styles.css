@@ -14,8 +14,7 @@ body {
 }
 
 .calc-body {
-    min-width: 40em;
-    min-height: 95vh;
+    min-width: 30em;
     border: 2px solid black;
     display: flex;
     flex-direction: column;
@@ -41,10 +40,18 @@ body {
     height: 30vh;
     border: 2px solid black;
     background-color: blueviolet;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.calc-screen > * {
+    align-self: flex-end
 }
 
 .calc-button-container {
-    margin-top: 15px;
+
     width: 100%;
     height: 50vh;
     border: 2px solid black;
@@ -61,38 +68,41 @@ body {
 }
 
 .left .calc-button {
-    min-width: 30%;
+    width: 30%;
     border: 2px solid black;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 15px;
 }
 
 .right {
     min-width: 20%;
     background-color: pink;
     display: flex;
+    flex-direction: column;
+}
+
+.right > .bottom, .right >.top {
+    display: flex;
+    width: 100%;
+    height: 50%;
     flex-flow: row wrap;
     justify-content: space-between;
+    gap: 7px;
 }
 
 .right .calc-button {
-    min-width: 45%;
-    max-height: 15%;
+    width: 45%;
+    height: 40px;
     border: 2px solid black;
+    border-radius: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 2px;
 }
 
-.right .bottom {
-    display: flex;
-    width: 100%;
-
-}
-
-.right .calc-button-big {
-    min-width: 30%;
-    border: 2px solid black;
-
+.big {
+    min-height: 100%;
 }
