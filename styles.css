@@ -14,7 +14,8 @@ body {
 }
 
 .calc-body {
-    min-width: 30em;
+    max-width: 30em;
+    max-height: 40em;
     border: 2px solid black;
     display: flex;
     flex-direction: column;
@@ -60,6 +61,7 @@ body {
 
 .numbers-buttons{
     min-width: 70%;
+    min-height: 100%;
     background-color: chartreuse;
     display: flex;
     flex-flow: row wrap;
@@ -69,7 +71,7 @@ body {
 }
 
 .numbers-buttons > .calc-button {
-    width: 30%;
+    min-width: 30%;
     height: 70px;
     border: 2px solid black;
     display: flex;
@@ -105,7 +107,7 @@ body {
 }
 
 .right .calc-button {
-    width: 40%;
+    min-width: 40%;
     height: 40px;
     border: 2px solid black;
     border-radius: 15px;
@@ -116,5 +118,5 @@ body {
 }
 
 .right > .operations-buttons > .big {
-    height: 60%;
+    min-height: 60%;
 }
