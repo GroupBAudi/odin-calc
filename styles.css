@@ -59,6 +59,15 @@ body {
 
 .screen {
     margin-top: auto;
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.current-number {
+    align-self: flex-end;
+}
+
+.number-to-be-added {
     align-self: flex-end;
 }
 
