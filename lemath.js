@@ -16,7 +16,7 @@ toBeAdded.textContent = "";
 numberButton.addEventListener("click", (event) => {
     if (event.target.className !== "numbers-buttons") {
         if ((event.target.textContent == "0" || event.target.textContent == "00" )&& !currNum.textContent) {
-            console.log("enter number first blin");
+            console.error("enter number first blin");
         } else  {
             currNum.textContent += event.target.textContent;
             screen.appendChild(currNum);
@@ -47,13 +47,13 @@ operation.addEventListener("click", function operation (event) {
     if (event.target.className !== "operations-buttons" && event.target.id !== "evaluate") {
         if (varA === "") {
             console.log("enter number first blin");
-        } 
+        } else {
             eventFire = true;
             placeholderOperation.textContent = varA + " " + event.target.textContent + " ";
             toBeAdded.appendChild(placeholderOperation);
             if (currOper) {
                 prevOper = currOper;
-                console.log(prevOper);
+                console.log(`prevOper = ${prevOper}`);
             }
             currOper = event.target.textContent;         
             currNum.replaceWith(placeHolder);
@@ -81,59 +81,75 @@ operation.addEventListener("click", function operation (event) {
                         varA = result;
                         break;                        
                 } 
-                console.log("this one fires");
                 placeHolder.textContent = result;
             }
             allowChangeOper = false;
             placeholderOperation.textContent = result + " "+ event.target.textContent;
+        }
     }
 })
 
 let grandTotal = document.createElement("h4");
+grandTotal.setAttribute("class", "number-to-be-added")
 let counter = 0;
 const evaluate = document.querySelector("#evaluate");
 evaluate.addEventListener("click", function evaluate (event) {
     if (event.target.id == "evaluate") {
         if (!counter) {
-            grandTotal.textContent = toBeAdded.textContent + currNum.textContent + " = ";
+            grandTotal.textContent = result + " " + currOper + " "+ currNum.textContent + " = ";
             toBeAdded.replaceWith(grandTotal);
             switch (currOper) {
                 case "+":
                     result = parseInt(varA) + parseInt(varB);
                     currNum.textContent = result;
+                    varA = result;
                     counter++;
                     break;
                 case "-":
                     result = parseInt(varA) - parseInt(varB);
                     currNum.textContent = result;
+                    varA = result;
+                    counter++;
                     break;
                 case "x":
                     result = parseInt(varA) * parseInt(varB);
                     currNum.textContent = result;
+                    varA = result;
+                    counter++;
                     break;
                 case "/":
                     result = parseInt(varA) / parseInt(varB);
                     currNum.textContent = result;
+                    varA = result;
+                    counter++;
                     break;
             }
         } else {    
+            grandTotal.textContent = result + " " + currOper + " " + varB + " = ";
             switch (currOper) {
                 case "+":
                     result = result + parseInt(varB);
                     currNum.textContent = result;
+                    varA = result;
                     counter++;
                     break;
                 case "-":
                     result = parseInt(varA) - parseInt(varB);
                     currNum.textContent = result;
+                    varA = result;
+                    counter++;
                     break;
                 case "x":
                     result = parseInt(varA) * parseInt(varB);
                     currNum.textContent = result;
+                    varA = result;
+                    counter++;
                     break;
                 case "/":
                     result = parseInt(varA) / parseInt(varB);
                     currNum.textContent = result;
+                    varA = result;
+                    counter++;
                     break;
             }
         }
