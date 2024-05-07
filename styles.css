@@ -69,6 +69,7 @@ body {
 
 .number-to-be-added {
     align-self: flex-end;
+    background-color: aqua;
 }
 
 .calc-button-container {

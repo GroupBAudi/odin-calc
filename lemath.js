@@ -1,35 +1,36 @@
 let screen = document.querySelector(".screen");
-
 let currNum = document.querySelector(".current-number");
 let placeHolder = document.createElement("h1");
 let toBeAdded = document.querySelector(".number-to-be-added");
 let history = document.createElement("p")
 
-toBeAdded.textContent = "";
-
 const numberButton = document.querySelector(".numbers-buttons");
 const operationsButton = document.querySelector(".operations-buttons");
 
-
 let result;
 let eventFire = false;
+let allowChangeOper = false;
+
+toBeAdded.textContent = "";
 
 numberButton.addEventListener("click", (event) => {
     if (event.target.className !== "numbers-buttons") {
-        currNum.textContent += event.target.textContent;
-        screen.appendChild(currNum);
-        if (!eventFire) {           
-            varA = currNum.textContent;
-            if (placeHolder) {
+        if ((event.target.textContent == "0" || event.target.textContent == "00" )&& !currNum.textContent) {
+            console.log("enter number first blin");
+        } else  {
+            currNum.textContent += event.target.textContent;
+            screen.appendChild(currNum);
+            if (!eventFire) {           
+                varA = currNum.textContent;
+            }
+            if (eventFire) {
                 placeHolder.textContent = "";
+                varB = currNum.textContent;
+                allowChangeOper = true;
             }
         }
-        if (eventFire) {
-            varB = currNum.textContent;
-            placeHolder.textContent = "";
-        }
     }
-})  
+});
 
 /* add decimal feature */
 
@@ -40,19 +41,28 @@ let varB = "";
 let currOper = "";
 let prevOper = "";
 
+let placeholderOperation = document.createElement("h4");
 
 operation.addEventListener("click", function operation (event) {
     if (event.target.className !== "operations-buttons" && event.target.id !== "evaluate") {
-            toBeAdded.textContent += currNum.textContent + " " + event.target.textContent + " ";
+        if (varA === "") {
+            console.log("enter number first blin");
+        } 
             eventFire = true;
-            screen.appendChild(toBeAdded);
+            placeholderOperation.textContent = varA + " " + event.target.textContent + " ";
+            toBeAdded.appendChild(placeholderOperation);
             if (currOper) {
                 prevOper = currOper;
+                console.log(prevOper);
             }
             currOper = event.target.textContent;         
-            screen.replaceChild(placeHolder, currNum);
+            currNum.replaceWith(placeHolder);
             currNum.textContent = "";
-            if (varA && varB && prevOper) {
+            if (!result) {
+                placeHolder.textContent = varA;
+                result = varA;
+            }
+            if (allowChangeOper) {
                 switch (prevOper) {
                     case "+":
                         result = parseFloat(varA) + parseFloat(varB);
@@ -70,38 +80,67 @@ operation.addEventListener("click", function operation (event) {
                         result = parseFloat(varA) / parseFloat(varB);
                         varA = result;
                         break;                        
-
-                }
+                } 
+                console.log("this one fires");
+                placeHolder.textContent = result;
             }
-            placeHolder.textContent = varA;
-    }
-    if (event.target.id == "evaluate") {
-        switch (currOper) {
-            case "+":
-                result = parseInt(varA) + parseInt(varB);
-                toBeAdded.textContent += currNum.textContent ;
-                currNum.textContent = result;
-                break;
-            case "-":
-                result = parseInt(varA) - parseInt(varB);
-                toBeAdded.textContent += currNum.textContent ;
-                currNum.textContent = result;
-                break;
-            case "*":
-                console.log("eval timee")
-                result = parseInt(varA) * parseInt(varB);
-                toBeAdded.textContent += currNum.textContent ;
-                currNum.textContent = result;
-                break;
-            case "/":
-                console.log("eval timee")
-                result = parseInt(varA) / parseInt(varB);
-                toBeAdded.textContent += currNum.textContent ;
-                currNum.textContent = result;
-                break;
-        }
+            allowChangeOper = false;
+            placeholderOperation.textContent = result + " "+ event.target.textContent;
     }
 })
+
+let grandTotal = document.createElement("h4");
+let counter = 0;
+const evaluate = document.querySelector("#evaluate");
+evaluate.addEventListener("click", function evaluate (event) {
+    if (event.target.id == "evaluate") {
+        if (!counter) {
+            grandTotal.textContent = toBeAdded.textContent + currNum.textContent + " = ";
+            toBeAdded.replaceWith(grandTotal);
+            switch (currOper) {
+                case "+":
+                    result = parseInt(varA) + parseInt(varB);
+                    currNum.textContent = result;
+                    counter++;
+                    break;
+                case "-":
+                    result = parseInt(varA) - parseInt(varB);
+                    currNum.textContent = result;
+                    break;
+                case "x":
+                    result = parseInt(varA) * parseInt(varB);
+                    currNum.textContent = result;
+                    break;
+                case "/":
+                    result = parseInt(varA) / parseInt(varB);
+                    currNum.textContent = result;
+                    break;
+            }
+        } else {    
+            switch (currOper) {
+                case "+":
+                    result = result + parseInt(varB);
+                    currNum.textContent = result;
+                    counter++;
+                    break;
+                case "-":
+                    result = parseInt(varA) - parseInt(varB);
+                    currNum.textContent = result;
+                    break;
+                case "x":
+                    result = parseInt(varA) * parseInt(varB);
+                    currNum.textContent = result;
+                    break;
+                case "/":
+                    result = parseInt(varA) / parseInt(varB);
+                    currNum.textContent = result;
+                    break;
+            }
+        }
+    }
+    
+})
+
 
 const deleteButton = document.querySelector(".erase-buttons");
 
