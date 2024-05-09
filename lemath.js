@@ -27,6 +27,7 @@ numberButton.addEventListener("click", (event) => {
                 placeHolder.textContent = "";
                 varB = currNum.textContent;
                 allowChangeOper = true;
+                evalMode = false;
             }
         }
     }
@@ -42,121 +43,105 @@ let currOper = "";
 let prevOper = "";
 
 let placeholderOperation = document.createElement("h4");
+placeholderOperation.setAttribute("class", "number-to-be-added");
+let gtPlaceholderOp = document.createElement("h4");
+gtPlaceholderOp.setAttribute("class", "number-to-be-added");
 
 operation.addEventListener("click", function operation (event) {
-    if (event.target.className !== "operations-buttons" && event.target.id !== "evaluate") {
+    let condition = (event.target.className !== "operations-buttons" && event.target.id !== "evaluate");
+
+    if (condition && evalMode) {
+        console.log("this one should fires");
+        gtPlaceholderOp.textContent = result + " " + event.target.textContent; 
+        grandTotal.replaceWith(gtPlaceholderOp);
+        currNum.textContent = "";
+        placeHolder.textContent = result;
+    }
+    if (condition && !evalMode) {
+        console.log("this shouldn't fire");
         if (varA === "") {
             console.log("enter number first blin");
-        } else {
-            eventFire = true;
-            placeholderOperation.textContent = varA + " " + event.target.textContent + " ";
-            toBeAdded.appendChild(placeholderOperation);
-            if (currOper) {
-                prevOper = currOper;
-                console.log(`prevOper = ${prevOper}`);
+        }  else {
+                eventFire = true;
+                
+                if (currOper) {
+                    prevOper = currOper;
+                    // console.log(`prevOper = ${prevOper}`);
+                }
+                currOper = event.target.textContent;         
+                currNum.replaceWith(placeHolder);
+                currNum.textContent = "";
+                if (!result) {
+                    placeHolder.textContent = varA;
+                    result = varA;
+                }
+                placeholderOperation.textContent = varA + " " + event.target.textContent + " ";
+                if (allowChangeOper) {
+                    switch (prevOper) {
+                        case "+":
+                            result = parseFloat(varA) + parseFloat(varB);
+                            varA = result;
+                            break;
+                        case "-":
+                            result = parseFloat(varA) - parseFloat(varB);
+                            varA = result;
+                            break;
+                        case "x":
+                            result = parseFloat(varA) * parseFloat(varB);
+                            varA = result;
+                            break;
+                        case "/":
+                            result = parseFloat(varA) / parseFloat(varB);
+                            varA = result;
+                            break;                        
+                    } 
+                    placeHolder.textContent = result;
+                }
+                allowChangeOper = false;
+                placeholderOperation.textContent = result + " "+ event.target.textContent;
+                
+                
+                toBeAdded.appendChild(placeholderOperation);
+                gtPlaceholderOp.replaceWith(placeholderOperation); // just in case if the code above does not work ;) shitty ass implementation be like
             }
-            currOper = event.target.textContent;         
-            currNum.replaceWith(placeHolder);
-            currNum.textContent = "";
-            if (!result) {
-                placeHolder.textContent = varA;
-                result = varA;
-            }
-            if (allowChangeOper) {
-                switch (prevOper) {
-                    case "+":
-                        result = parseFloat(varA) + parseFloat(varB);
-                        varA = result;
-                        break;
-                    case "-":
-                        result = parseFloat(varA) - parseFloat(varB);
-                        varA = result;
-                        break;
-                    case "x":
-                        result = parseFloat(varA) * parseFloat(varB);
-                        varA = result;
-                        break;
-                    case "/":
-                        result = parseFloat(varA) / parseFloat(varB);
-                        varA = result;
-                        break;                        
-                } 
-                placeHolder.textContent = result;
-            }
-            allowChangeOper = false;
-            placeholderOperation.textContent = result + " "+ event.target.textContent;
         }
-    }
 })
 
 let grandTotal = document.createElement("h4");
-grandTotal.setAttribute("class", "number-to-be-added")
-let counter = 0;
+grandTotal.setAttribute("class", "number-to-be-added");
+let evalMode = false;
+
 const evaluate = document.querySelector("#evaluate");
 evaluate.addEventListener("click", function evaluate (event) {
     if (event.target.id == "evaluate") {
-        if (!counter) {
-            grandTotal.textContent = result + " " + currOper + " "+ currNum.textContent + " = ";
-            toBeAdded.replaceWith(grandTotal);
-            switch (currOper) {
-                case "+":
-                    result = parseInt(varA) + parseInt(varB);
-                    currNum.textContent = result;
-                    varA = result;
-                    counter++;
-                    break;
-                case "-":
-                    result = parseInt(varA) - parseInt(varB);
-                    currNum.textContent = result;
-                    varA = result;
-                    counter++;
-                    break;
-                case "x":
-                    result = parseInt(varA) * parseInt(varB);
-                    currNum.textContent = result;
-                    varA = result;
-                    counter++;
-                    break;
-                case "/":
-                    result = parseInt(varA) / parseInt(varB);
-                    currNum.textContent = result;
-                    varA = result;
-                    counter++;
-                    break;
-            }
-        } else {    
-            grandTotal.textContent = result + " " + currOper + " " + varB + " = ";
-            switch (currOper) {
-                case "+":
-                    result = result + parseInt(varB);
-                    currNum.textContent = result;
-                    varA = result;
-                    counter++;
-                    break;
-                case "-":
-                    result = parseInt(varA) - parseInt(varB);
-                    currNum.textContent = result;
-                    varA = result;
-                    counter++;
-                    break;
-                case "x":
-                    result = parseInt(varA) * parseInt(varB);
-                    currNum.textContent = result;
-                    varA = result;
-                    counter++;
-                    break;
-                case "/":
-                    result = parseInt(varA) / parseInt(varB);
-                    currNum.textContent = result;
-                    varA = result;
-                    counter++;
-                    break;
-            }
+        grandTotal.textContent = result + " " + currOper + " "+ varB + " = ";
+        toBeAdded.replaceWith(grandTotal);
+        gtPlaceholderOp.replaceWith(grandTotal); // also this just in case if the code above does not work ;) what's wrong with me with this ahh
+        switch (currOper) {
+            case "+":
+                result = parseInt(varA) + parseInt(varB);
+                currNum.textContent = result;
+                varA = result;
+                break;
+            case "-":
+                result = parseInt(varA) - parseInt(varB);
+                currNum.textContent = result;
+                varA = result;
+                break;
+            case "x":
+                result = parseInt(varA) * parseInt(varB);
+                currNum.textContent = result;
+                varA = result;
+                break;
+            case "/":
+                result = parseInt(varA) / parseInt(varB);
+                currNum.textContent = result;
+                varA = result;
+                break;
         }
+        evalMode = true;
     }
-    
-})
-
+});
 
 const deleteButton = document.querySelector(".erase-buttons");
 
@@ -167,5 +152,5 @@ deleteButton.addEventListener("click", (event) => {
     if (event.target.id == "erase") {
         console.log("Not yet implemented");
     }
-})
+});
 
