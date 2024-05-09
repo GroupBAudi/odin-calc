@@ -14,11 +14,14 @@ let allowChangeOper = false;
 toBeAdded.textContent = "";
 
 numberButton.addEventListener("click", (event) => {
-    if (event.target.className !== "numbers-buttons") {
-        if ((event.target.textContent == "0" || event.target.textContent == "00" )&& !currNum.textContent) {
+    let condition = event.target.className !== "numbers-buttons"
+    let notZero = (event.target.textContent == "0" || event.target.textContent == "00" )
+    let target = event.target.textContent;
+    if (condition) {
+        if (notZero && !currNum.textContent) {
             console.error("enter number first blin");
         } else  {
-            currNum.textContent += event.target.textContent;
+            currNum.textContent += target;
             screen.appendChild(currNum);
             if (!eventFire) {           
                 varA = currNum.textContent;
@@ -34,6 +37,10 @@ numberButton.addEventListener("click", (event) => {
 });
 
 /* add decimal feature */
+const decimal = document.querySelector("#id");
+decimal.addEventListener("click", function addDecimal (event) {
+
+});
 
 const operation = document.querySelector(".operations-buttons");
 
@@ -49,16 +56,16 @@ gtPlaceholderOp.setAttribute("class", "number-to-be-added");
 
 operation.addEventListener("click", function operation (event) {
     let condition = (event.target.className !== "operations-buttons" && event.target.id !== "evaluate");
+    let target = event.target.textContent;
 
     if (condition && evalMode) {
-        console.log("this one should fires");
-        gtPlaceholderOp.textContent = result + " " + event.target.textContent; 
+        gtPlaceholderOp.textContent = result + " " + target;
         grandTotal.replaceWith(gtPlaceholderOp);
         currNum.textContent = "";
         placeHolder.textContent = result;
+        currOper = target;
     }
     if (condition && !evalMode) {
-        console.log("this shouldn't fire");
         if (varA === "") {
             console.log("enter number first blin");
         }  else {
@@ -66,16 +73,14 @@ operation.addEventListener("click", function operation (event) {
                 
                 if (currOper) {
                     prevOper = currOper;
-                    // console.log(`prevOper = ${prevOper}`);
                 }
-                currOper = event.target.textContent;         
+                currOper = target;         
                 currNum.replaceWith(placeHolder);
                 currNum.textContent = "";
                 if (!result) {
                     placeHolder.textContent = varA;
                     result = varA;
                 }
-                placeholderOperation.textContent = varA + " " + event.target.textContent + " ";
                 if (allowChangeOper) {
                     switch (prevOper) {
                         case "+":
@@ -98,9 +103,7 @@ operation.addEventListener("click", function operation (event) {
                     placeHolder.textContent = result;
                 }
                 allowChangeOper = false;
-                placeholderOperation.textContent = result + " "+ event.target.textContent;
-                
-                
+                placeholderOperation.textContent = result + " " + target;
                 toBeAdded.appendChild(placeholderOperation);
                 gtPlaceholderOp.replaceWith(placeholderOperation); // just in case if the code above does not work ;) shitty ass implementation be like
             }
