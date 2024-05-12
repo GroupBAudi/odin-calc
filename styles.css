@@ -6,8 +6,12 @@
 }
 
 :root {
-    --body-color: gray;
-    
+    --body-color: #5c5e68;
+    --body-color-dark: #414241;
+    --button-color: #5b5b5b;
+    --button-color-hover: #adadad;
+    --button-color-active: #2f2f2f;
+    --screen-backlight: #c3c3c2;
 }
 
 body {
@@ -15,24 +19,25 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: gray;
+    background-color: black;
 }
 
 .calc-body {
-    max-width: 40em;
-    max-height: 40em;
-    border: 2px solid black;
+    min-width: 25em;
+    max-width: 25em;
+    height: 32em;
+    max-height: 32em;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 15px 10px;
+    padding: 20px 15px;
     gap: 15px;
-    background-color: lightgray;
+    background-color: var(--body-color);
+    border-radius: 10px;
 }
 
 .calc-text-container {
     display: flex;
-    background-color: cyan;
     width: 100%;
     font-size: 32px;
     font-weight: 800;
@@ -44,9 +49,9 @@ body {
 
 .calc-screen {
     width: 100%;
-    height: 30vh;
+    height: 40vh;
     border: 2px solid black;
-    background-color: blueviolet;
+    background-color: var(--screen-backlight);
     overflow-y: scroll;
     overflow-x: hidden;
     display: flex;
@@ -63,6 +68,7 @@ body {
     height: 10%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 0 7px;
 }
 
@@ -72,95 +78,97 @@ body {
     flex-flow: column wrap;
 }
 
-.current-number {
+.current-number, .number-to-be-added {
     align-self: flex-end;
 }
 
-.number-to-be-added {
-    align-self: flex-end;
-    background-color: aqua;
-}
-
-.calc-button-container {
+.calc-buttons {
     width: 100%;
-    height: 50vh;
+    height: 100%;
     border: 2px solid black;
     display: flex;
+    border-radius: 15px;
+    background-color: var(--body-color-dark);
 }
 
 .numbers-buttons {
-    min-width: 70%;
-    min-height: 100%;
-    background-color: #babab9;
+    width: 100%;
     display: flex;
     flex-flow: row wrap;
-    gap: 7px;
     justify-content: center;
     align-content: center;
+    gap: 7px;
 }
 
 .numbers-buttons > .calc-button {
     min-width: 30%;
-    height: 70px;
+    height: 21%;
     border: 2px solid black;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 15px;
+    border-radius: 5px;
     color: white;
-    background-color: #5b5b5b;
+    background-color: var(--button-color);
 }
 
 .numbers-buttons > .calc-button:hover {
-    background-color: #adadad;
+    background-color: var(--button-color-hover);
 }
 
 .numbers-buttons > .calc-button:active {
-    background-color: #2f2f2f;
+    background-color: var(--button-color-active);
 }
 
 .right {
-    min-width: 30%;
-    background-color: pink;
     display: flex;
-    flex-direction: column;
-    gap: 7px;
+    flex-flow: column nowrap;
     justify-content: center;
 }
 
 .right > .erase-buttons {
+    height: 15%;
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
+    align-items: center;
     gap: 7px;
-    justify-content: center;
-    height: 20%;
-    align-content: center;
-}
-
-.right > .operations-buttons {
-    display: flex;
-    flex-flow: row wrap;
-    gap: 7px;
-    justify-content: center;
-    height: 100%;
 }
 
 
-.right > .operations-buttons > .calc-button {
-    min-width: 40%;
-    height: 40px;
+.right .operations-buttons {
+    height: 80%;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    gap: 7px;
+}
+
+
+.right .calc-button {
+    width: 45%;
+    height: 30px;
     border: 2px solid black;
-    border-radius: 15px;
+    border-radius: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 2px;
+    background-color: var(--button-color);
+    color: white;
+}
+
+.right .calc-button:hover {
+    background-color: var(--button-color-hover);
+}
+
+.right .calc-button:active {
+    background-color: var(--button-color-active);
 }
 
 .right > .operations-buttons > .calc-button:hover {
-    background-color: ;
+    background-color: gray;
 }
 
 .right > .operations-buttons > .big {
-    min-height: 60%;
+    min-height: 54%;
 }
