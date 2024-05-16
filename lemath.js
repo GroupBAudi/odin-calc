@@ -1,19 +1,24 @@
 // initial setup
 
-let screen = document.querySelector(".screen");
+let screen = document.querySelector(".current-number-container");
 let currNum = document.querySelector(".current-number");
 let toBeAdded = document.querySelector(".number-to-be-added");
-let history = document.createElement("p")
+let history = document.createElement("p");
+
+// negate setup
+
+const negate = document.querySelector("#negate");
+let minus = document.querySelector(".negative");
+let isMinus = false;
 
 // selects the number section of the calculator
 
 const numberButton = document.querySelector(".numbers-buttons");
 const operationsButton = document.querySelector(".operations-buttons");
 
-let result;
+let result = "";
 let eventFire = false;
 let allowChangeOper = false;
-let isMinus = true;
 
 toBeAdded.textContent = "";
 
@@ -21,16 +26,46 @@ function addNumber(event) {
     let condition = event.target.className !== "numbers-buttons"
     let isNumZero = (event.target.textContent == "0")
     let target = event.target.textContent;
+
+    if (event.target.id == "negate") {
+        if (currNum.textContent == "0") {
+            console.warn("enter number first before you negate something")
+        } else {
+            if (!isMinus) {
+                isMinus = true;
+                minus.textContent = "-";
+                if (!eventFire) {
+                    varA = -varA;
+                } 
+                if (eventFire) {
+                    console.log(varB == "");
+                    if (varB == "") {
+                        varB = -varA;
+                    } else {
+                        varB = -varB;
+                    }
+                    allowChangeOper = true;
+                }
+            } else {
+                isMinus = false;
+                minus.textContent = "";
+            }
+            // console.log(isMinus);
+        }
+    }
+
+
     if (condition && event.target.id != "dot" && event.target.id != "negate") {
+        
         if (isNumZero && currNum.textContent == "0") {
             currNum.textContent = "0";
         } else {
             if (currNum.textContent == "0") {
                 currNum.textContent = "";
             }  
-             currNum.textContent += target;
+            currNum.textContent += target;
             screen.appendChild(currNum);
-            if (!eventFire) {           
+            if (!eventFire) {
                 varA = currNum.textContent;
             }
             if (eventFire) {
@@ -41,20 +76,6 @@ function addNumber(event) {
             }
         }
         
-    }
-    
-    if (event.target.id == "negate") {
-        if (isMinus) {
-            console.log(`-${currNum.textContent}`);
-            currNum.textContent = `-${currNum.textContent}`
-            isMinus = false;
-            
-        } else {
-            console.log(currNum.textContent[0] = "");
-            console.log("this should execute");
-            currNum.textContent = `+${currNum.textContent}`
-            isMinus = true;
-        }
     }
 };
 
@@ -69,7 +90,6 @@ function addDecimal (event) {
 }
 
 decimal.addEventListener("click", addDecimal);
-
 
 // select the operation section without the '=' sign
 const operation = document.querySelector(".operations-buttons");
@@ -89,6 +109,7 @@ let currOper = "";
 let prevOper = "";
 
 function processOperation (event) {
+    
     let condition = (event.target.className !== "operations-buttons" && event.target.id !== "evaluate");
     let target = event.target.textContent;
     if (condition && evalMode) {
@@ -103,16 +124,28 @@ function processOperation (event) {
             varA = 0;
         }  else {
             eventFire = true; 
+            
             if (currOper) {
                 prevOper = currOper;
             }
             currOper = target;         
             currNum.replaceWith(placeHolder);
             currNum.textContent = "";
-            if (!result) {
+            if (result === "") {
                 placeHolder.textContent = varA;
                 result = varA;
+                isMinus = false;
             }
+            console.log(isMinus);
+            if (document.querySelector(".negative").textContent == "-") {
+                console.log("minus exists");
+                minus.textContent = "";
+                isMinus = false;
+            } else {
+                console.log("minus does not");
+            }
+            console.log(parseFloat(varA) + parseFloat(varB));
+            console.log(varB);
             if (allowChangeOper) {
                 switch (prevOper) {
                     case "+":
@@ -133,6 +166,7 @@ function processOperation (event) {
                         break;                        
                 } 
                 placeHolder.textContent = result;
+                console.log(result);
             };
             allowChangeOper = false;
             placeholderOperation.textContent = result + " " + target;
@@ -154,13 +188,14 @@ const evaluate = document.querySelector("#evaluate");
 
 function evaluateProcess (event) {
     if (event.target.id == "evaluate") {
-        if (!varB) {
+        if (varB == "") {
             grandTotal.textContent = currNum.textContent;
             result = currNum.textContent;
             placeHolder.textContent = result;
             currNum.replaceWith(placeHolder);
             toBeAdded.replaceWith(grandTotal);
             eventFire = true;
+            minus.textContent = "";
         }
         if (varB) {
             grandTotal.textContent = result + " " + currOper + " "+ varB + " = ";
@@ -189,6 +224,7 @@ function evaluateProcess (event) {
                     break;
              }
         }
+        minus.textContent = "";
         evalMode = true;
     }
 };
