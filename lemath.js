@@ -50,7 +50,6 @@ function addNumber(event) {
                 isMinus = false;
                 minus.textContent = "";
             }
-            // console.log(isMinus);
         }
     }
 
@@ -98,10 +97,6 @@ let placeHolder = document.createElement("h1");
 placeHolder.setAttribute("class", "current-number");
 
 let placeholderOperation = document.createElement("h4");
-placeholderOperation.setAttribute("class", "number-to-be-added");
-
-let gtPlaceholderOp = document.createElement("h4");
-gtPlaceholderOp.setAttribute("class", "number-to-be-added");
 
 let varA = "";
 let varB = "";
@@ -144,7 +139,7 @@ function processOperation (event) {
             } else {
                 console.log("minus does not");
             }
-            console.log(parseFloat(varA) + parseFloat(varB));
+            console.log(varA);
             console.log(varB);
             if (allowChangeOper) {
                 switch (prevOper) {
@@ -170,18 +165,20 @@ function processOperation (event) {
             };
             allowChangeOper = false;
             placeholderOperation.textContent = result + " " + target;
+            console.log(placeholderOperation);
             toBeAdded.appendChild(placeholderOperation);
             gtPlaceholderOp.replaceWith(placeholderOperation); // just in case if the code above does not work ;) shitty ass implementation be like
         }
     }
     decimal.addEventListener("click", addDecimal);
+    
 };
 
 operation.addEventListener("click", processOperation);
 
 // select the evaluate button
 let grandTotal = document.createElement("h4");
-grandTotal.setAttribute("class", "number-to-be-added");
+let gtPlaceholderOp = document.createElement("h4");
 let evalMode = false;
 
 const evaluate = document.querySelector("#evaluate");
@@ -199,8 +196,7 @@ function evaluateProcess (event) {
         }
         if (varB) {
             grandTotal.textContent = result + " " + currOper + " "+ varB + " = ";
-            toBeAdded.replaceWith(grandTotal);
-            gtPlaceholderOp.replaceWith(grandTotal); // also this just in case if the code above does not work ;) what's wrong with me with this ahh
+            placeholderOperation.replaceWith(grandTotal);
             switch (currOper) {
                 case "+":
                     result = (parseFloat(varA) + parseFloat(varB));
@@ -230,15 +226,25 @@ function evaluateProcess (event) {
 };
 
 // select the delete and clear button
-const deleteButton = document.querySelector(".erase-buttons");
+const deleteButton = document.querySelector("#ce");
 
-deleteButton.addEventListener("click", (event) => {
-    if (event.target.id == "clear") {
-        currNum.textContent = "";
+function clearEntry (event) {
+    if (event.target.id == "ce") {
+        currNum.textContent = "0";
+        varA = "";
+        varB = "";
+        result = "";
+        currOper = "";
+        prevOper = "";
+        eventFire = false;
+        isMinus = false;
+        allowChangeOper = false;
+        evalMode = false;
+        document.querySelector(".number-to-be-added").textContent = "";
+        placeholderOperation.textContent = "";
     }
-    if (event.target.id == "erase") {
-        console.log("Not yet implemented");
-    }
-});
+}
+
+deleteButton.addEventListener("click", clearEntry)
 
 evaluate.addEventListener("click", evaluateProcess);
