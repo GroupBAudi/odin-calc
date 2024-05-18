@@ -22,6 +22,8 @@ let allowChangeOper = false;
 
 toBeAdded.textContent = "";
 
+let array = [];
+
 function addNumber(event) {
     let condition = event.target.className !== "numbers-buttons"
     let isNumZero = (event.target.textContent == "0")
@@ -50,6 +52,7 @@ function addNumber(event) {
                 isMinus = false;
                 minus.textContent = "";
             }
+            
         }
     }
 
@@ -225,11 +228,12 @@ function evaluateProcess (event) {
     }
 };
 
+evaluate.addEventListener("click", evaluateProcess);
+
 // select the delete and clear button
 const deleteButton = document.querySelector("#ce");
 
-function clearEntry (event) {
-    if (event.target.id == "ce") {
+function clearEntry () {
         currNum.textContent = "0";
         varA = "";
         varB = "";
@@ -242,9 +246,18 @@ function clearEntry (event) {
         evalMode = false;
         document.querySelector(".number-to-be-added").textContent = "";
         placeholderOperation.textContent = "";
-    }
 }
 
 deleteButton.addEventListener("click", clearEntry)
 
-evaluate.addEventListener("click", evaluateProcess);
+const eraseButton = document.querySelector("#erase");
+
+function eraseEntry (event) {
+    console.log(currNum.textContent.substring(1));
+    currNum.textContent = currNum.textContent.substring(0, currNum.textContent.length - 1);
+    varA = currNum.textContent;
+    varB = currNum.textContent;
+}
+
+eraseButton.addEventListener("click", eraseEntry);
+
