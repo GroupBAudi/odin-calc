@@ -28,7 +28,6 @@ function addNumber(event) {
     let condition = event.target.className !== "numbers-buttons"
     let isNumZero = (event.target.textContent == "0")
     let target = event.target.textContent;
-
     if (event.target.id == "negate") {
         if (currNum.textContent == "0") {
             console.warn("enter number first before you negate something")
@@ -107,7 +106,6 @@ let currOper = "";
 let prevOper = "";
 
 function processOperation (event) {
-    
     let condition = (event.target.className !== "operations-buttons" && event.target.id !== "evaluate");
     let target = event.target.textContent;
     if (condition && evalMode) {
@@ -134,16 +132,10 @@ function processOperation (event) {
                 result = varA;
                 isMinus = false;
             }
-            console.log(isMinus);
             if (document.querySelector(".negative").textContent == "-") {
-                console.log("minus exists");
                 minus.textContent = "";
                 isMinus = false;
-            } else {
-                console.log("minus does not");
             }
-            console.log(varA);
-            console.log(varB);
             if (allowChangeOper) {
                 switch (prevOper) {
                     case "+":
@@ -196,9 +188,12 @@ function evaluateProcess (event) {
             toBeAdded.replaceWith(grandTotal);
             eventFire = true;
             minus.textContent = "";
-        }
-        if (varB) {
+        } else {
             grandTotal.textContent = result + " " + currOper + " "+ varB + " = ";
+            console.log(grandTotal.textContent);
+            if (!evalMode) {
+                gtPlaceholderOp.replaceWith(grandTotal);
+            }
             placeholderOperation.replaceWith(grandTotal);
             switch (currOper) {
                 case "+":
@@ -230,7 +225,7 @@ function evaluateProcess (event) {
 
 evaluate.addEventListener("click", evaluateProcess);
 
-// select the delete and clear button
+// clear entry button
 const deleteButton = document.querySelector("#ce");
 
 function clearEntry () {
@@ -250,6 +245,7 @@ function clearEntry () {
 
 deleteButton.addEventListener("click", clearEntry)
 
+// erase button
 const eraseButton = document.querySelector("#erase");
 
 function eraseEntry (event) {
