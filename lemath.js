@@ -79,7 +79,7 @@ function operate (event) {
     if (condition) {
         for (let i in operatorsArr) {
             if (event.target.id == operatorsArr[i]) {
-                eventFire = true; // after any operator is pressed, switches to varB
+                eventFire = true; // after any operator is pressed, switches to varB (and stays on varB)
                 placeHolderNumber.textContent = currentNumber.textContent; // placeholder number after pressing any operator, assume number is varA
                 if (varA == "") { 
                     varA = 0; // if we don't input anything at all, just assume varA is 0
@@ -115,10 +115,15 @@ function operate (event) {
                     } else if (operator == "/") {
                         result = a / b;
                     }
-                    varA = result;
+                    console.log(varA, varB);
                     console.log(result);
+                    varA = result;
+                    varB = "";
+                    placeHolderNumber.textContent = result;
                 }
             }
+
+
         }
         
         
@@ -141,9 +146,31 @@ add evaluation feature
 
 */
 
-/*
+let clearButton = document.querySelector(".clear");
+function clearEntry () {
+    varA = "";
+    varB = "";
+    isMinus = false;
+    negative.textContent = "";
+    eventFire = false;
+    currentNumber.textContent = "0";
+    placeHolderNumber.replaceWith(currentNumber);
+}
+clearButton.addEventListener("click", clearEntry);
 
-to do:
-add erase feature
 
-*/
+let eraseButton = document.querySelector(".erase");
+function erase () {
+    currentNumber.textContent = currentNumber.textContent.substring(0, currentNumber.textContent.length - 1);
+    if (currentNumber.textContent.length == 0) {
+        currentNumber.textContent = "0";
+    }
+    if (!eventFire) {
+        varA = currentNumber.textContent;
+    } else {
+        varB = currentNumber.textContent;
+    }
+}
+eraseButton.addEventListener("click", erase);
+
+

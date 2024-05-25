@@ -67,7 +67,7 @@ body {
     justify-content: flex-end;
 }
 
-.number-to-be-added {
+.number-history {
     align-self: flex-end;
 }
 
@@ -148,8 +148,8 @@ body {
     justify-content: center;
     align-items: center;
     padding: 2px;
-    background-color: var(--button-color);
-    color: white;
+    background-color: #57d9fc;
+    color: black;
 }
 
 .right .calc-button:hover {
