@@ -20,6 +20,8 @@ placeHolderNumber.setAttribute("class", "current-number");
 let negative = document.querySelector(".negative"); // for minus thingy
 negative.textContent = "";
 
+let varACopy = "";
+
 // select the section with the numbers
 function calculator (event) {
     const condition = event.target.id !== "";
@@ -57,6 +59,7 @@ function calculator (event) {
         }
         if (!eventFire) {
             varA = negative.textContent + currentNumber.textContent;
+            varACopy = currentNumber.textContent;
         } else {
             placeHolderNumber.textContent = ""; // sets the placeholder text to be empty as soon as the number is inputted
             varB = negative.textContent + currentNumber.textContent;
@@ -89,14 +92,13 @@ function operate (event) {
     if (condition) {
         for (let i in operatorsArr) {
             if (event.target.id == operatorsArr[i]) {
-                console.log("count")
                 eventFire = true; // after any operator is pressed, switches to varB (and stays on varB)
                 if (currentOperator !== "") { // checks first if current operator has either +, 0 , *, / or %
                     operator = currentOperator; // assigns a previous variable called 'operator' to current operator
                 }        
                 currentOperator = event.target.id; // set the current operator variable with either +, -, *, /, or %
 
-                if (varA == "") { 
+                if (varA === "") { 
                     varA = 0; // if we don't input anything at all, just assume varA is 0
                     placeHolderNumber.textContent = "0";
                 }
@@ -108,6 +110,8 @@ function operate (event) {
                     evalMode = false; // disabling evaluate
                 }
 
+                varACopy = parseFloat(varA) + parseFloat(varB);
+                
                 if (varB !== "") {
                     let a = parseFloat(varA);
                     let b = parseFloat(varB);
@@ -122,18 +126,19 @@ function operate (event) {
                         result = a / b;
                     }
                     console.log(varA, varB);
-                    console.log(result);
+  
                     varA = result;
                     varB = "";
                     placeHolderNumber.textContent = result;
                 }
+                if (varA !== "") {
+                    console.log("A");
+                    numberHistory.textContent = varA + " " + currentOperator + " ";
+                    placeHolderNumber.textContent = varA;
+                }
+
                 isMinus = false; // each time operator is pressed, automatically remove negative.
                 negative.textContent = "";
-
-                if (varB === "") {
-                    numberHistory.textContent = varA + " " + currentOperator + " ";
-                    placeHolderNumber.textContent = varA;  // placeholder number after pressing any operator, assume number is varA
-                }
             }
         }
     }
@@ -145,38 +150,43 @@ let evaluateButton = document.querySelector("#evaluate");
 
 let evalMode = false;
 
+
+
 function evaluate () { 
     evalMode = true; // repeatedly count with the same varB
-    
     let a = parseFloat(varA);
     let b = parseFloat(varB);
+    if (currentOperator) {
+        if (varB === "") {
+            b = parseFloat(varACopy);
+            console.log(varACopy);
+        }
+        if (currentOperator == "+") {
+            result = a + b;
+        } else if (currentOperator == "-") {
+            result = a - b;
+        } else if (currentOperator == "x") {
+            result = a * b;
+        } else if (currentOperator == "/") {
+            result = a / b;
+        }
+    
+        varA = result;
 
-    if (currentOperator == "+") {
-        result = a + b;
-    } else if (currentOperator == "-") {
-        result = a - b;
-    } else if (currentOperator == "x") {
-        result = a * b;
-    } else if (currentOperator == "/") {
-        result = a / b;
+        placeHolderNumber.textContent = result;
+        currentNumber.replaceWith(placeHolderNumber);
+    
+        numberHistory.textContent = a + " " + currentOperator + " " + b + " " + " = ";
+    }
+    else if (varB === "") {
+        numberHistory.textContent = a + " " + "="
     }
 
-    varA = result;
-
-    placeHolderNumber.textContent = result;
-    currentNumber.replaceWith(placeHolderNumber);
-
-    numberHistory.textContent = a + " " + currentOperator + " " + b + " " + " = ";
+   
 }
 
 evaluateButton.addEventListener("click", evaluate)
 
-
-/*
-
-to do: add negate function
-
-*/
 let clearButton = document.querySelector(".clear");
 function clearEntry () {
     varA = "";
