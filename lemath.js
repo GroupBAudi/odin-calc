@@ -1,3 +1,5 @@
+// alert("to do add placeholder number thingy, and work on other function")
+
 // select the screen
 let currentNumber = document.querySelector(".current-number");
 
@@ -16,7 +18,6 @@ let eventFire = false;
 let placeHolderNumber = document.createElement("h1");
 placeHolderNumber.setAttribute("class", "current-number");
 
-
 let negative = document.querySelector(".negative"); // for minus thingy
 negative.textContent = "";
 
@@ -26,12 +27,12 @@ let varACopy = "";
 function calculator (event) {
     const condition = event.target.id !== "";
     const isNotDot = event.target.id !== "dot";
+    const isNotOpButton = event.target.className !== "calc-button operation-button"; // optimize this later
     let currId = event.target.id;
 
     let numbers = [1,2,3,4,5,6,7,8,9,0];
     // negate function
-    if (condition && isNotDot) { // prevents inputting other than the numbers 
-
+    if (condition && isNotDot && isNotOpButton) { // prevents inputting other than the numbers
         if (currId === "negate") { // selects only the negate button
             if (currentNumber.textContent === "0") {
                 console.error("intentional error");
@@ -42,9 +43,6 @@ function calculator (event) {
                 } else {
                     negative.textContent = "";
                     isMinus = false;
-                }
-                if (placeHolderNumber.textContent) {
-                    console.log("big pp");
                 }
             }
         }
@@ -57,26 +55,22 @@ function calculator (event) {
                 currentNumber.textContent += event.target.id;
             }
         }
+
         if (!eventFire) {
             varA = negative.textContent + currentNumber.textContent;
-            varACopy = currentNumber.textContent;
+            // varACopy = negative.textContent + currentNumber.textContent;
         } else {
-            placeHolderNumber.textContent = ""; // sets the placeholder text to be empty as soon as the number is inputted
             varB = negative.textContent + currentNumber.textContent;
-            placeHolderNumber.replaceWith(currentNumber); // replace the placeholder text with varB
+            placeHolderNumber.replaceWith(currentNumber);
         }
-        
     }
-
-   
-
 }
 
 numButtons.addEventListener("click", calculator);
 
 // select the operations section
 
-const opButtons = document.querySelector(".operations-buttons");
+const opButton = document.querySelectorAll(".operation-button-container"); // optimize this later
 
 let currentOperator = "";
 let operator = "";
@@ -88,30 +82,38 @@ let isMinus = false; // for the negate
 function operate (event) {
     const condition = event.target.id !== "";
     let operatorsArr = ["+", "-", "/", "x"];
+    // console.log(event.target.id == "evaluate");
     
     if (condition) {
         for (let i in operatorsArr) {
+            
             if (event.target.id == operatorsArr[i]) {
                 eventFire = true; // after any operator is pressed, switches to varB (and stays on varB)
                 if (currentOperator !== "") { // checks first if current operator has either +, 0 , *, / or %
                     operator = currentOperator; // assigns a previous variable called 'operator' to current operator
                 }        
+
                 currentOperator = event.target.id; // set the current operator variable with either +, -, *, /, or %
 
                 if (varA === "") { 
                     varA = 0; // if we don't input anything at all, just assume varA is 0
-                    placeHolderNumber.textContent = "0";
+                    placeHolderNumber.textContent = "0"; // placeholder number set to 0
+                    currentNumber.replaceWith(placeHolderNumber) // then replace the current number with place holder, current number is 0
                 }
+
                 currentNumber.textContent = ""; // set current number to nothing, so we can input varB
-                currentNumber.replaceWith(placeHolderNumber); // replace current number with placeHolderNumber
 
                 if (evalMode) { // preventing from adding / substracting the result with varB after pressing any operator
                     varB = "";
                     evalMode = false; // disabling evaluate
                 }
 
-                varACopy = parseFloat(varA) + parseFloat(varB);
+                varACopy = negative.textContent + parseFloat(varA) + parseFloat(varB);
+                if (varB === "") {
+                    varACopy = negative.textContent + parseFloat(varA);
+                }
                 
+                // the operation
                 if (varB !== "") {
                     let a = parseFloat(varA);
                     let b = parseFloat(varB);
@@ -126,15 +128,16 @@ function operate (event) {
                         result = a / b;
                     }
                     console.log(varA, varB);
-  
                     varA = result;
                     varB = "";
-                    placeHolderNumber.textContent = result;
                 }
-                if (varA !== "") {
-                    console.log("A");
-                    numberHistory.textContent = varA + " " + currentOperator + " ";
-                    placeHolderNumber.textContent = varA;
+
+                if (varA !== "") { // varA will be set to result too
+                    console.log(varA);
+                    numberHistory.textContent = varA + " " + currentOperator + " "; // adds the history
+                    placeHolderNumber.textContent = varA; // set the placeholder to varA or the result (first time is always varA)
+                    currentNumber.replaceWith(placeHolderNumber); // replace currentnumber with placeholder
+                    currentNumber.textContent = ""; // empties the current number to input varB
                 }
 
                 isMinus = false; // each time operator is pressed, automatically remove negative.
@@ -144,22 +147,23 @@ function operate (event) {
     }
 }
 
-opButtons.addEventListener("click", operate);
+opButton.forEach((item, index) => {
+    item.addEventListener("click", operate);
+})
+
 
 let evaluateButton = document.querySelector("#evaluate");
 
 let evalMode = false;
 
-
-
 function evaluate () { 
+    console.log("evaluate");
     evalMode = true; // repeatedly count with the same varB
     let a = parseFloat(varA);
     let b = parseFloat(varB);
     if (currentOperator) {
         if (varB === "") {
             b = parseFloat(varACopy);
-            console.log(varACopy);
         }
         if (currentOperator == "+") {
             result = a + b;
@@ -172,8 +176,7 @@ function evaluate () {
         }
     
         varA = result;
-
-        placeHolderNumber.textContent = result;
+        placeHolderNumber.textContent = varA;
         currentNumber.replaceWith(placeHolderNumber);
     
         numberHistory.textContent = a + " " + currentOperator + " " + b + " " + " = ";
@@ -187,21 +190,24 @@ function evaluate () {
 
 evaluateButton.addEventListener("click", evaluate)
 
-let clearButton = document.querySelector(".clear");
-function clearEntry () {
+// Clear, erase, and clear entry button
+
+let clearButton = document.querySelector("#clear");
+
+function clear () {
     varA = "";
     varB = "";
     isMinus = false;
     negative.textContent = "";
     eventFire = false;
     currentNumber.textContent = "0";
-    placeHolderNumber.replaceWith(currentNumber);
     numberHistory.textContent = "";
+    placeHolderNumber.textContent = "";
 }
-clearButton.addEventListener("click", clearEntry);
+clearButton.addEventListener("click", clear);
 
 
-let eraseButton = document.querySelector(".erase");
+let eraseButton = document.querySelector("#erase");
 function erase () {
     currentNumber.textContent = currentNumber.textContent.substring(0, currentNumber.textContent.length - 1);
     if (currentNumber.textContent.length == 0) {
