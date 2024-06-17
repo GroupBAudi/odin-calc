@@ -24,7 +24,7 @@
             <div class="top">
                 <div class="top-row">
                     <span class="operation-button-container">
-                        <div class="calc-button operation-button" id="%">%</div>
+                        <div class="calc-button exponent" id="%">%</div> <!-- i dont know if percentage of is an exponent, me sux at meth -->
                         <div class="calc-button operation-button" id="clear">C</div>
                         <div class="calc-button operation-button" id="erase">Erase</div>
                         <div class="calc-button operation-button" id="clearEntry">CE</div>
@@ -32,9 +32,9 @@
                 </div>
                 <div class="bottom-row">
                     <span class="operation-button-container">
-                        <div class="calc-button operation-button" id="%">1/x</div>
-                        <div class="calc-button operation-button" id="pow">pow()</div>
-                        <div class="calc-button operation-button" id="sqrt">sqrt()</div>
+                        <div class="calc-button exponent" id="1/x">1/x</div>
+                        <div class="calc-button exponent" id="sqr">sqr()</div>
+                        <div class="calc-button exponent" id="sqrt">sqrt()</div>
                         <div class="calc-button operation-button" id="/">/</div>   
                     </span>
                 </div>
@@ -61,13 +61,11 @@
                     <span class="operation-button-container">
                         <div class="calc-button operation-button" id="+">+</div>
                     </span>
-                    
-                    <span class="operation-button-container">
-                        <div class="calc-button negate-button" id="negate">+/-</div>
-                    </span>
+
+                    <div class="calc-button negate-button" id="negate">+/-</div>
                     <div class="calc-button" id="0">0</div>
+                    <div class="calc-button decimal-button" id="dot">.</div>
                     <span class="operation-button-container">
-                        <div class="calc-button decimal-button" id="dot">.</div>
                         <div class="calc-button operation-button" id="evaluate">=</div>
                     </span>
                 </div>

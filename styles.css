@@ -12,9 +12,9 @@
     --button-color-hover: #7a7a7a;
     --button-color-active: #4e4e4e;
     --screen-backlight: #c3c3c2;
-    --operation-button-color: #878787;
-    --operation-button-color-hover: #696969; /* noice */
-    --operation-button-color-active: #494949;
+    --operation-button-color: #6c6c6c;
+    --operation-button-color-hover: #525252; /* noice */
+    --operation-button-color-active: #3b3b3b;
     --evaluate-button: #07d8f8;
     --evaluate-button-hover: #06b2cc;
     --evaluate-button-active: #0591a6;
@@ -64,11 +64,9 @@ body {
     
 }
 
-.calc-screen > * {
-    font-size: 15px;
-}
-
 .current-number-container {
+    max-width: 100%;
+    font-size: min(15px, 24px);
     display: flex;
     justify-content: flex-end;
 }
@@ -110,15 +108,15 @@ body {
     background-color: var(--button-color-active);
 }
 
-.operation-button {
+.operation-button-container > div {
     background-color: var(--operation-button-color);
 }
 
-.operation-button:hover {
+.operation-button-container > div:hover {
     background-color: var(--operation-button-color-hover);
 }
 
-.operation-button:active {
+.operation-button-container > div:active {
     background-color: var(--operation-button-color-active);
 }
 

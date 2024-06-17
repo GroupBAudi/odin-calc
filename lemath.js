@@ -23,14 +23,17 @@ negative.textContent = "";
 
 let varACopy = "";
 
+let varAText = "";
+
 // select the section with the numbers
-function calculator (event) {
+function inputNumber (event) {
     const condition = event.target.id !== "";
     const isNotDot = event.target.id !== "dot";
     const isNotOpButton = event.target.className !== "calc-button operation-button"; // optimize this later
-    let currId = event.target.id;
+    const currId = event.target.id;
 
-    let numbers = [1,2,3,4,5,6,7,8,9,0];
+    const numbers = [1,2,3,4,5,6,7,8,9,0];
+
     // negate function
     if (condition && isNotDot && isNotOpButton) { // prevents inputting other than the numbers
         if (currId === "negate") { // selects only the negate button
@@ -53,12 +56,17 @@ function calculator (event) {
             }
             if (currId == numbers[i]) {
                 currentNumber.textContent += event.target.id;
+                if (currentNumber.textContent.length > 15) { // set maximum length
+                    console.log("stahp");
+                    numButtons.removeEventListener("click", inputNumber)
+                }
             }
         }
 
         if (!eventFire) {
             varA = negative.textContent + currentNumber.textContent;
-            // varACopy = negative.textContent + currentNumber.textContent;
+            varACopy = negative.textContent + currentNumber.textContent; // mainly use for evaluate only
+            varAText = negative.textContent + currentNumber.textContent; // mainly used to display the history after adding number 
         } else {
             varB = negative.textContent + currentNumber.textContent;
             placeHolderNumber.replaceWith(currentNumber);
@@ -66,7 +74,9 @@ function calculator (event) {
     }
 }
 
-numButtons.addEventListener("click", calculator);
+
+
+numButtons.addEventListener("click", inputNumber);
 
 // select the operations section
 
@@ -81,12 +91,10 @@ let isMinus = false; // for the negate
 
 function operate (event) {
     const condition = event.target.id !== "";
-    let operatorsArr = ["+", "-", "/", "x"];
-    // console.log(event.target.id == "evaluate");
-    
+    const operatorsArr = ["+", "-", "/", "x"];
+    numButtons.addEventListener("click", inputNumber);
     if (condition) {
         for (let i in operatorsArr) {
-            
             if (event.target.id == operatorsArr[i]) {
                 eventFire = true; // after any operator is pressed, switches to varB (and stays on varB)
                 if (currentOperator !== "") { // checks first if current operator has either +, 0 , *, / or %
@@ -108,7 +116,7 @@ function operate (event) {
                     evalMode = false; // disabling evaluate
                 }
 
-                varACopy = negative.textContent + parseFloat(varA) + parseFloat(varB);
+                varACopy = negative.textContent + parseFloat(varA) + parseFloat(varB); // for evaluate only
                 if (varB === "") {
                     varACopy = negative.textContent + parseFloat(varA);
                 }
@@ -118,23 +126,23 @@ function operate (event) {
                     let a = parseFloat(varA);
                     let b = parseFloat(varB);
 
-                    if (operator == "+") {
+                    if (operator === "+") {
                         result = a + b;
-                    } else if (operator == "-") {
+                    } else if (operator === "-") {
                         result = a - b;
-                    } else if (operator == "x") {
+                    } else if (operator === "x") {
                         result = a * b;
-                    } else if (operator == "/") {
-                        result = a / b;
+                    } else if (operator === "/") {
+                        result = a / b; 
                     }
                     console.log(varA, varB);
                     varA = result;
+                    varAText = result;
                     varB = "";
                 }
 
                 if (varA !== "") { // varA will be set to result too
-                    console.log(varA);
-                    numberHistory.textContent = varA + " " + currentOperator + " "; // adds the history
+                    numberHistory.textContent = varAText + " " + currentOperator + " "; // adds the history
                     placeHolderNumber.textContent = varA; // set the placeholder to varA or the result (first time is always varA)
                     currentNumber.replaceWith(placeHolderNumber); // replace currentnumber with placeholder
                     currentNumber.textContent = ""; // empties the current number to input varB
@@ -144,6 +152,7 @@ function operate (event) {
                 negative.textContent = "";
             }
         }
+        
     }
 }
 
@@ -151,13 +160,47 @@ opButton.forEach((item) => {
     item.addEventListener("click", operate);
 })
 
+let exponent = document.querySelectorAll(".exponent");
+
+function addExponent (event) {
+    const exponent = ["sqr", "sqrt", "1/x"];
+    for (let i in exponent) {
+        if (event.target.id === exponent[i]) {
+            if (event.target.id === "sqr") {
+                varAText = `sqr(${varA})`;
+                varA = Math.pow(varA, 2);
+            } else if (event.target.id === "sqrt") {
+                varAText = `sqrt(${varA})`
+                varA = Math.sqrt(varA);
+            } else if (event.target.id === "1/x") {
+                varAText = `1/${varA}`;
+                varA = 1 / varA;
+            }
+            placeHolderNumber.textContent = varA;
+            currentNumber.replaceWith(placeHolderNumber);
+            numberHistory.textContent = varAText;
+        }
+    }
+    if (event.target.id === "%") { 
+        varB = varA * (varB / 100);
+        console.log(varB);
+
+        placeHolderNumber.textContent = varB
+        currentNumber.replaceWith(placeHolderNumber);
+        numberHistory.textContent = varAText + " " + currentOperator + " " + varB;
+    }
+}
+
+exponent.forEach((item) => item.addEventListener("click", addExponent))
+
+
 
 let evaluateButton = document.querySelector("#evaluate");
 
 let evalMode = false;
 
 function evaluate () { 
-    console.log("evaluate");
+
     evalMode = true; // repeatedly count with the same varB
     let a = parseFloat(varA);
     let b = parseFloat(varB);
@@ -175,11 +218,14 @@ function evaluate () {
             result = a / b;
         }
     
+        numberHistory.textContent = varAText + " " + currentOperator + " " + b + " " + " = ";
+
         varA = result;
+        varAText = result;
         placeHolderNumber.textContent = varA;
         currentNumber.replaceWith(placeHolderNumber);
     
-        numberHistory.textContent = a + " " + currentOperator + " " + b + " " + " = ";
+        
     }
     else if (varB === "") {
         numberHistory.textContent = a + " " + "="
@@ -190,7 +236,7 @@ evaluateButton.addEventListener("click", evaluate)
 
 // Clear, erase, and clear entry button
 
-let clearButton = document.querySelector("#clear");
+let clearAll = document.querySelector("#clear");
 
 function clear () {
     varA = "";
@@ -203,10 +249,11 @@ function clear () {
     placeHolderNumber.textContent = "";
     placeHolderNumber.replaceWith(currentNumber);
 }
-clearButton.addEventListener("click", clear);
+clearAll.addEventListener("click", clear);
 
 
 let eraseButton = document.querySelector("#erase");
+
 function erase () {
     currentNumber.textContent = currentNumber.textContent.substring(0, currentNumber.textContent.length - 1);
     if (currentNumber.textContent.length == 0) {
@@ -220,4 +267,10 @@ function erase () {
 }
 eraseButton.addEventListener("click", erase);
 
+let clearEntryButton = document.querySelector("#clearEntry");
 
+function clearEntry () {
+    currentNumber.textContent = "0"
+}
+
+clearEntryButton.addEventListener("click", clearEntry);
