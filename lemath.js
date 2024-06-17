@@ -147,7 +147,7 @@ function operate (event) {
     }
 }
 
-opButton.forEach((item, index) => {
+opButton.forEach((item) => {
     item.addEventListener("click", operate);
 })
 
@@ -184,8 +184,6 @@ function evaluate () {
     else if (varB === "") {
         numberHistory.textContent = a + " " + "="
     }
-
-   
 }
 
 evaluateButton.addEventListener("click", evaluate)
@@ -203,6 +201,7 @@ function clear () {
     currentNumber.textContent = "0";
     numberHistory.textContent = "";
     placeHolderNumber.textContent = "";
+    placeHolderNumber.replaceWith(currentNumber);
 }
 clearButton.addEventListener("click", clear);
 

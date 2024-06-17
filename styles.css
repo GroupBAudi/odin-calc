@@ -8,10 +8,16 @@
 :root {
     --body-color: #5c5e68;
     --body-color-dark: #414241;
-    --button-color: #5b5b5b;
-    --button-color-hover: #adadad;
-    --button-color-active: #2f2f2f;
+    --button-color: #a0a0a0;
+    --button-color-hover: #7a7a7a;
+    --button-color-active: #4e4e4e;
     --screen-backlight: #c3c3c2;
+    --operation-button-color: #878787;
+    --operation-button-color-hover: #696969; /* noice */
+    --operation-button-color-active: #494949;
+    --evaluate-button: #07d8f8;
+    --evaluate-button-hover: #06b2cc;
+    --evaluate-button-active: #0591a6;
 }
 
 body {
@@ -77,13 +83,12 @@ body {
     flex-flow: column wrap;
 }
 
-.calc-buttons {
-    border: 2px solid black;
+.calc-buttons-container {
     display: flex;
-    background-color: var(--body-color-dark);
     width: 100%;
     height: 100%;
-    
+    flex-flow: column nowrap;
+    gap: 2px;
 }
 
 .calc-button {
@@ -93,23 +98,49 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    
+    border-radius: 5px;
+    background-color: var(--button-color);
 }
 
-.container {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    flex-flow: column nowrap;
-    gap: 2px;
+.calc-button:hover {
+    background-color: var(--button-color-hover);
+}
+
+.calc-button:active {
+    background-color: var(--button-color-active);
+}
+
+.operation-button {
+    background-color: var(--operation-button-color);
+}
+
+.operation-button:hover {
+    background-color: var(--operation-button-color-hover);
+}
+
+.operation-button:active {
+    background-color: var(--operation-button-color-active);
+}
+
+#evaluate { /* unique color of "=" button */
+    background-color: var(--evaluate-button);
+}
+
+#evaluate:hover {
+    background-color: var(--evaluate-button-hover);
+}
+
+#evaluate:active {
+    background-color: var(--evaluate-button-active);
 }
 
 .top {
     display: flex;
-    background-color: green;
+    /* background-color: green; */
     width: 100%;
     flex-flow: column nowrap;
     align-items: center;
+    gap: 2px;
 }
 
 .top-row, .bottom-row {
@@ -125,14 +156,14 @@ body {
 .bottom {
     width: 100%;
     height: 100%;
-    background-color: magenta;
+    /* background-color: magenta; */
     display: flex;
 }
 
 .numbers-buttons {
     display: flex;
     flex-flow: row wrap;
-    background-color: aliceblue;
+    /* background-color: aliceblue; */
     width: 100%;
     align-content: center;
     justify-content: center;
@@ -152,6 +183,3 @@ body {
     background-color: var(--button-color-active);
 }
 
-.right > .operations-buttons > .calc-button:hover {
-    background-color: gray;
-}
