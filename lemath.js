@@ -1,5 +1,3 @@
-// alert("to do add placeholder number thingy, and work on other function")
-
 // select the screen
 let currentNumber = document.querySelector(".current-number");
 
@@ -68,6 +66,10 @@ function inputNumber (event) {
                 clear();
                 isError = false;
             }
+            if (evalMode) {
+                clear();
+                evalMode = false;
+            }
         }
 
         if (!eventFire) {
@@ -98,7 +100,7 @@ numButtons.addEventListener("click", inputNumber);
 
 // select the operations section
 
-const opButton = document.querySelectorAll(".operation-button-container"); // optimize this later
+const opButton = document.querySelectorAll(".operation-button"); // optimize this later
 
 let currentOperator = "";
 let operator = "";
@@ -155,14 +157,14 @@ function operate (event) {
                         result = a * b;
                     } else if (operator === "/") {
                         if (b === 0) {
-                            // removes all event listener if varB is 0, cant divide by 0
                             // to do
+                            
                             opButton.forEach(item => item.removeEventListener("click", operate));
                             evaluateButton.removeEventListener("click", evaluate);
                             exponent.forEach(item => item.removeEventListener("click", addExponent));
 
-                            numberHistory.textContent = varAText + " " + operator + " " + varB + " " + currentOperator;
-                            placeHolderNumber.textContent = "FUCK";
+                            numberHistory.textContent = varAText + " " + operator + " " + varB + " " + currentOperator + " ";
+                            placeHolderNumber.textContent = "Can't divide by zero";
                             currentNumber.replaceWith(placeHolderNumber);
 
                             isError = true;
@@ -260,19 +262,36 @@ function evaluate () {
         } else if (currentOperator == "x") {
             result = a * b;
         } else if (currentOperator == "/") {
-            result = a / b;
-        }
-    
-        numberHistory.textContent = varAText + " " + currentOperator + " " + b + " " + " = ";
+            if (b === 0) {
+                opButton.forEach(item => item.removeEventListener("click", operate));
+                evaluateButton.removeEventListener("click", evaluate);
+                exponent.forEach(item => item.removeEventListener("click", addExponent));
+
+                b = 0;
+
+                isError = true;
+            } else {
+                result = a / b;
+            }
+        }        
 
         varA = result;
-        varAText = result;
         placeHolderNumber.textContent = varA;
-        currentNumber.replaceWith(placeHolderNumber);
         
+        if (isError) {
+            numberHistory.textContent = varACopy + " " + currentOperator + " " + varBText + " = ";
+            placeHolderNumber.textContent = "Can't divide by zero";
+        } else {
+            numberHistory.textContent = varAText + " " + currentOperator + " " + varBText + " = ";
+        } 
+
+        varAText = result;
+        currentNumber.replaceWith(placeHolderNumber);
+
     }
     else if (varB === "") {
-        numberHistory.textContent = a + " " + "="
+        numberHistory.textContent = a + " " + "=";
+
     }
 }
 
@@ -285,6 +304,9 @@ const clearAll = document.querySelector("#clear");
 function clear () {
     varA = "";
     varB = "";
+    varACopy = "";
+    varAText = "";
+    varBText = "";
     isMinus = false;
     negative.textContent = "";
     eventFire = false;
