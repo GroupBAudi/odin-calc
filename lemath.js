@@ -22,8 +22,11 @@ let negative = document.querySelector(".negative"); // for minus thingy
 negative.textContent = "";
 
 let varACopy = "";
-
 let varAText = "";
+
+let varBText = "";
+
+let isError = false; // for errors such as divide by 0
 
 // select the section with the numbers
 function inputNumber (event) {
@@ -61,6 +64,10 @@ function inputNumber (event) {
                     numButtons.removeEventListener("click", inputNumber)
                 }
             }
+            if (isError) { // if any error is encountered, should the user press any number, it will reset
+                clear();
+                isError = false;
+            }
         }
 
         if (!eventFire) {
@@ -69,11 +76,22 @@ function inputNumber (event) {
             varAText = negative.textContent + currentNumber.textContent; // mainly used to display the history after adding number 
         } else {
             varB = negative.textContent + currentNumber.textContent;
+            varBText = negative.textContent + currentNumber.textContent;
             placeHolderNumber.replaceWith(currentNumber);
         }
     }
 }
 
+const decimalButton = document.querySelector(".decimal-button");
+let hasDecimal = false;
+
+function addDecimal () {
+    currentNumber.textContent += ".";
+    hasDecimal = true;
+    decimalButton.removeEventListener("click", addDecimal)
+}
+
+decimalButton.addEventListener("click", addDecimal);
 
 
 numButtons.addEventListener("click", inputNumber);
@@ -92,7 +110,10 @@ let isMinus = false; // for the negate
 function operate (event) {
     const condition = event.target.id !== "";
     const operatorsArr = ["+", "-", "/", "x"];
+
     numButtons.addEventListener("click", inputNumber);
+    decimalButton.addEventListener("click", addDecimal);
+
     if (condition) {
         for (let i in operatorsArr) {
             if (event.target.id == operatorsArr[i]) {
@@ -133,7 +154,22 @@ function operate (event) {
                     } else if (operator === "x") {
                         result = a * b;
                     } else if (operator === "/") {
-                        result = a / b; 
+                        if (b === 0) {
+                            // removes all event listener if varB is 0, cant divide by 0
+                            // to do
+                            opButton.forEach(item => item.removeEventListener("click", operate));
+                            evaluateButton.removeEventListener("click", evaluate);
+                            exponent.forEach(item => item.removeEventListener("click", addExponent));
+
+                            numberHistory.textContent = varAText + " " + operator + " " + varB + " " + currentOperator;
+                            placeHolderNumber.textContent = "FUCK";
+                            currentNumber.replaceWith(placeHolderNumber);
+
+                            isError = true;
+                            
+                        } else {
+                            result = a / b; 
+                        }
                     }
                     console.log(varA, varB);
                     varA = result;
@@ -152,7 +188,6 @@ function operate (event) {
                 negative.textContent = "";
             }
         }
-        
     }
 }
 
@@ -163,44 +198,54 @@ opButton.forEach((item) => {
 let exponent = document.querySelectorAll(".exponent");
 
 function addExponent (event) {
+    // to do
     const exponent = ["sqr", "sqrt", "1/x"];
     for (let i in exponent) {
         if (event.target.id === exponent[i]) {
-            if (event.target.id === "sqr") {
-                varAText = `sqr(${varA})`;
-                varA = Math.pow(varA, 2);
-            } else if (event.target.id === "sqrt") {
-                varAText = `sqrt(${varA})`
-                varA = Math.sqrt(varA);
-            } else if (event.target.id === "1/x") {
-                varAText = `1/${varA}`;
-                varA = 1 / varA;
+            if (!eventFire) {
+                if (event.target.id === "sqr") {
+                    varAText = `sqr(${varA})`;
+                    varA = Math.pow(varA, 2);
+                } else if (event.target.id === "sqrt") {
+                    varAText = `sqrt(${varA})`
+                    varA = Math.sqrt(varA);
+                } else if (event.target.id === "1/x") {
+                    varAText = `1/${varA}`;
+                    varA = 1 / varA;
+                }
+                placeHolderNumber.textContent = varA;
+                numberHistory.textContent = varAText;
             }
-            placeHolderNumber.textContent = varA;
-            currentNumber.replaceWith(placeHolderNumber);
-            numberHistory.textContent = varAText;
+            else if (eventFire) {
+                if (event.target.id === "sqr") {
+                    varBText = `sqr(${varB})`;
+                    varB = Math.pow(varB, 2);
+                } else if (event.target.id === "sqrt") {
+                    varBText = `sqrt(${varB})`
+                    varB = Math.sqrt(varB);
+                } else if (event.target.id === "1/x") {
+                    varBText = `1/${varB}`;
+                    varB = 1 / varB;
+                }
+                placeHolderNumber.textContent = varB;
+                numberHistory.textContent = varAText + " " + currentOperator + " " + varBText;
+            }
         }
     }
     if (event.target.id === "%") { 
         varB = varA * (varB / 100);
-        console.log(varB);
-
         placeHolderNumber.textContent = varB
-        currentNumber.replaceWith(placeHolderNumber);
         numberHistory.textContent = varAText + " " + currentOperator + " " + varB;
     }
+    currentNumber.replaceWith(placeHolderNumber);
 }
 
 exponent.forEach((item) => item.addEventListener("click", addExponent))
 
-
-
-let evaluateButton = document.querySelector("#evaluate");
-
+const evaluateButton = document.querySelector("#evaluate");
 let evalMode = false;
 
 function evaluate () { 
-
     evalMode = true; // repeatedly count with the same varB
     let a = parseFloat(varA);
     let b = parseFloat(varB);
@@ -224,7 +269,6 @@ function evaluate () {
         varAText = result;
         placeHolderNumber.textContent = varA;
         currentNumber.replaceWith(placeHolderNumber);
-    
         
     }
     else if (varB === "") {
@@ -232,11 +276,11 @@ function evaluate () {
     }
 }
 
-evaluateButton.addEventListener("click", evaluate)
+evaluateButton.addEventListener("click", evaluate);
 
 // Clear, erase, and clear entry button
 
-let clearAll = document.querySelector("#clear");
+const clearAll = document.querySelector("#clear");
 
 function clear () {
     varA = "";
@@ -248,11 +292,14 @@ function clear () {
     numberHistory.textContent = "";
     placeHolderNumber.textContent = "";
     placeHolderNumber.replaceWith(currentNumber);
+    opButton.forEach(item => item.addEventListener("click", operate));
+    evaluateButton.addEventListener("click", evaluate);
+    exponent.forEach(item => item.addEventListener("click", addExponent));
 }
 clearAll.addEventListener("click", clear);
 
 
-let eraseButton = document.querySelector("#erase");
+const eraseButton = document.querySelector("#erase");
 
 function erase () {
     currentNumber.textContent = currentNumber.textContent.substring(0, currentNumber.textContent.length - 1);
@@ -267,7 +314,7 @@ function erase () {
 }
 eraseButton.addEventListener("click", erase);
 
-let clearEntryButton = document.querySelector("#clearEntry");
+const clearEntryButton = document.querySelector("#clearEntry");
 
 function clearEntry () {
     currentNumber.textContent = "0"
