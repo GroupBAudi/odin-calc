@@ -127,7 +127,9 @@ function operate (event) {
                 currentOperator = event.target.id; // set the current operator variable with either +, -, *, /, or %
 
                 if (varA === "") { 
-                    varA = 0; // if we don't input anything at all, just assume varA is 0
+                    console.log("executes");
+                    varA = 0;
+                    varAText = 0; // if we don't input anything at all, just assume varA is 0
                     placeHolderNumber.textContent = "0"; // placeholder number set to 0
                     currentNumber.replaceWith(placeHolderNumber) // then replace the current number with place holder, current number is 0
                 }
@@ -157,11 +159,15 @@ function operate (event) {
                         result = a * b;
                     } else if (operator === "/") {
                         if (b === 0) {
-                            // to do
-                            
-                            opButton.forEach(item => item.removeEventListener("click", operate));
+                            opButton.forEach(item => {
+                                item.removeEventListener("click", operate);
+                                item.style.backgroundColor = "#242424";
+                            });
                             evaluateButton.removeEventListener("click", evaluate);
-                            exponent.forEach(item => item.removeEventListener("click", addExponent));
+                            exponent.forEach(item => {
+                                item.removeEventListener("click", addExponent);
+                                item.style.backgroundColor = "#242424";
+                            });
 
                             numberHistory.textContent = varAText + " " + operator + " " + varB + " " + currentOperator + " ";
                             placeHolderNumber.textContent = "Can't divide by zero";
@@ -179,7 +185,7 @@ function operate (event) {
                     varB = "";
                 }
 
-                if (varA !== "") { // varA will be set to result too
+                if (varA !== "") { // varA will be set to result too        
                     numberHistory.textContent = varAText + " " + currentOperator + " "; // adds the history
                     placeHolderNumber.textContent = varA; // set the placeholder to varA or the result (first time is always varA)
                     currentNumber.replaceWith(placeHolderNumber); // replace currentnumber with placeholder
@@ -204,7 +210,7 @@ function addExponent (event) {
     const exponent = ["sqr", "sqrt", "1/x"];
     for (let i in exponent) {
         if (event.target.id === exponent[i]) {
-            if (!eventFire) {
+            if (!eventFire || evalMode) {
                 if (event.target.id === "sqr") {
                     varAText = `sqr(${varA})`;
                     varA = Math.pow(varA, 2);
@@ -231,7 +237,7 @@ function addExponent (event) {
                 }
                 placeHolderNumber.textContent = varB;
                 numberHistory.textContent = varAText + " " + currentOperator + " " + varBText;
-            }
+            } 
         }
     }
     if (event.target.id === "%") { 
@@ -254,6 +260,7 @@ function evaluate () {
     if (currentOperator) {
         if (varB === "") {
             b = parseFloat(varACopy);
+            varBText = b;
         }
         if (currentOperator == "+") {
             result = a + b;
@@ -263,9 +270,15 @@ function evaluate () {
             result = a * b;
         } else if (currentOperator == "/") {
             if (b === 0) {
-                opButton.forEach(item => item.removeEventListener("click", operate));
+                opButton.forEach(item => {
+                    item.removeEventListener("click", operate);
+                    item.style.backgroundColor = "#242424";
+                });
                 evaluateButton.removeEventListener("click", evaluate);
-                exponent.forEach(item => item.removeEventListener("click", addExponent));
+                exponent.forEach(item => {
+                    item.removeEventListener("click", addExponent);
+                    item.style.backgroundColor = "#242424";
+                });
 
                 b = 0;
 
@@ -274,7 +287,7 @@ function evaluate () {
                 result = a / b;
             }
         }        
-
+        
         varA = result;
         placeHolderNumber.textContent = varA;
         
@@ -307,16 +320,25 @@ function clear () {
     varACopy = "";
     varAText = "";
     varBText = "";
+    result = "";
     isMinus = false;
     negative.textContent = "";
     eventFire = false;
+    operator = "";
+    currentOperator = "";
     currentNumber.textContent = "0";
     numberHistory.textContent = "";
     placeHolderNumber.textContent = "";
     placeHolderNumber.replaceWith(currentNumber);
-    opButton.forEach(item => item.addEventListener("click", operate));
+    opButton.forEach(item => {
+        item.addEventListener("click", operate);
+        item.style.backgroundColor = null;
+    });
     evaluateButton.addEventListener("click", evaluate);
-    exponent.forEach(item => item.addEventListener("click", addExponent));
+    exponent.forEach(item => {
+        item.addEventListener("click", addExponent);
+        item.style.backgroundColor = null;
+    });
 }
 clearAll.addEventListener("click", clear);
 
@@ -330,8 +352,15 @@ function erase () {
     }
     if (!eventFire) {
         varA = currentNumber.textContent;
+        varACopy = currentNumber.textContent;
+        varAText = currentNumber.textContent;
     } else {
         varB = currentNumber.textContent;
+        varBText = currentNumber.textContent;
+    }
+    if (isError) {
+        clear();
+        isError = false;
     }
 }
 eraseButton.addEventListener("click", erase);
@@ -340,6 +369,10 @@ const clearEntryButton = document.querySelector("#clearEntry");
 
 function clearEntry () {
     currentNumber.textContent = "0"
+    if (isError) {
+        clear();
+        isError = false;
+    }
 }
 
 clearEntryButton.addEventListener("click", clearEntry);

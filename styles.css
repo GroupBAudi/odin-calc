@@ -132,9 +132,7 @@ body {
     background-color: var(--evaluate-button-active);
 }
 
-.blocked {
-    background-color: red;
-}
+
 
 .top {
     display: flex;
