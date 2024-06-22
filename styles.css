@@ -6,8 +6,7 @@
 }
 
 :root {
-    --body-color: #5c5e68;
-    --body-color-dark: #414241;
+    --body-color: #262626;
     --button-color: #a0a0a0;
     --button-color-hover: #7a7a7a;
     --button-color-active: #4e4e4e;
@@ -61,7 +60,6 @@ body {
     background-color: var(--screen-backlight);
     display: flex;
     flex-flow: column nowrap;
-    
 }
 
 .current-number-container {
@@ -92,7 +90,6 @@ body {
 .calc-button {
     width: 75px;
     height: 50px;
-    border: 2px solid black;
     display: flex;
     justify-content: center;
     align-items: center;
