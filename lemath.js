@@ -21,7 +21,7 @@ negative.textContent = "";
 
 let varACopy = varAEval = varAText = varBText = "";
 
-let hasTyped = 0;
+let hasTyped = false;
 
 let isError = false; // for errors such as divide by 0
 
@@ -31,7 +31,7 @@ function inputNumber (event) {
     const isNotDot = event.target.id !== "dot";
     const isNotOpButton = event.target.className !== "calc-button operation-button"; // optimize this late;
 
-    const numbers = [1,2,3,4,5,6,7,8,9,0];
+    const numbers = [0,1,2,3,4,5,6,7,8,9];
 
     // negate function
     if (condition && isNotDot && isNotOpButton) { // prevents inputting other than the numbers
@@ -42,7 +42,7 @@ function inputNumber (event) {
             } else {
                 if (!isMinus) {
                     negative.textContent = "-";
-                    if (hasTyped === 0) {
+                    if (!hasTyped) {
                         varB = parseFloat(varACopy);
                         varBText = `negate(${varB})`
                         currentNumber.textContent = parseFloat(varACopy);
@@ -51,7 +51,7 @@ function inputNumber (event) {
                     isMinus = true;
                 } else {
                     negative.textContent = "";
-                    if (hasTyped === 0) {
+                    if (!hasTyped) {
                         varB = parseFloat(varACopy);
                         varBText = `negate(${varB})`
                         currentNumber.textContent = parseFloat(varACopy) * -1;
@@ -61,13 +61,12 @@ function inputNumber (event) {
                 }
             }
         }
-
+        
         for (let i in numbers) {
-            if (currentNumber.textContent === "0" && event.target.id !== "negate") {
-                console.log("test");
-                currentNumber.textContent = ""; // for the sake of changing the number from 0 to any
-            }
             if (event.target.id == numbers[i]) {
+                if (currentNumber.textContent === "0" && event.target.id !== "negate") {
+                    currentNumber.textContent = ""; // for the sake of changing the number from 0 to any
+                }
                 currentNumber.textContent += event.target.id;
                 if (currentNumber.textContent.length > 15) { // set maximum length
                     console.log("stahp");
@@ -76,15 +75,14 @@ function inputNumber (event) {
             }
             if (isError) { // if any error is encountered, should the user press any number, it will reset
                 clear();
-                isError = false;
             }
             if (evalMode) {
                 clear();
                 evalMode = false;
             }
-            if (hasTyped === 0) {
+            if (!hasTyped) {
                 isMinus = false;
-                hasTyped++;
+                hasTyped = true;
             }
         }
 
@@ -98,11 +96,9 @@ function inputNumber (event) {
 }
 
 const decimalButton = document.querySelector(".decimal-button");
-let hasDecimal = false;
 
 function addDecimal () {
     currentNumber.textContent += ".";
-    hasDecimal = true;
     decimalButton.removeEventListener("click", addDecimal)
 }
 
@@ -126,12 +122,10 @@ function operate (event) {
     const condition = event.target.id !== "";
     const operatorsArr = ["+", "-", "/", "x"];
 
-    numButtons.addEventListener("click", inputNumber);
-    decimalButton.addEventListener("click", addDecimal);
-
-    hasTyped = 0;
+    hasTyped = false;
     if (condition) {
         for (let i in operatorsArr) {
+            decimalButton.addEventListener("click", addDecimal);
             if (event.target.id == operatorsArr[i]) {
                 eventFire = true; // after any currentOperator is pressed, switches to varB (and stays on varB)
                 if (chosenOperator !== "") { // checks first if current currentOperator has either +, 0 , *, / or %
@@ -175,16 +169,7 @@ function operate (event) {
                             break;
                         case "/":
                             if (b === 0) {
-                                opButton.forEach(item => {
-                                    item.removeEventListener("click", operate);
-                                    item.style.backgroundColor = "#242424";
-                                });
-                                evaluateButton.removeEventListener("click", evaluate);
-                                exponent.forEach(item => {
-                                    item.removeEventListener("click", addExponent);
-                                    item.style.backgroundColor = "#242424";
-                                });
-
+                                error();
                                 numberHistory.textContent = varAText + " " + currentOperator + " " + varB + " " + chosenOperator + " ";
                                 placeHolderNumber.textContent = "Can't divide by zero";
                                 currentNumber.replaceWith(placeHolderNumber);
@@ -216,6 +201,19 @@ opButton.forEach((item) => {
     item.addEventListener("click", operate);
 });
 
+function error() {
+    opButton.forEach(item => {
+        item.removeEventListener("click", operate);
+        item.style.backgroundColor = "#242424";
+    });
+    evaluateButton.removeEventListener("click", evaluate);
+    exponent.forEach(item => {
+        item.removeEventListener("click", addExponent);
+        item.style.backgroundColor = "#242424";
+    });
+    decimalButton.removeEventListener("click", addDecimal);
+    decimalButton.style.backgroundColor = "#242424";
+}
 
 let exponent = document.querySelectorAll(".exponent");
 let chosenExponent = "";
@@ -230,6 +228,9 @@ function addExponent (event) {
                 if (negative.textContent === "-") {
                     negative.textContent = "";
                 }
+                if (currentNumber.textContent === "0") {
+                    varACopy = varA = "0";
+                }
                 switch (chosenExponent) {
                     case "sqr":
                         varAText = `sqr(${varA})`;
@@ -242,9 +243,16 @@ function addExponent (event) {
                     case "1/x":
                         varAText = `1/${varA}`;
                         varACopy = varA = 1 / varA;
+                        if (currentNumber.textContent === "0") {
+                            error();
+                            isError = true;
+                        }
                         break;
                 }
                 currentNumber.textContent = placeHolderNumber.textContent = varA;
+                if (isError) {
+                    placeHolderNumber.textContent = "Can't divide by zero";
+                }
                 numberHistory.textContent = varAText;
             }
             else if (eventFire) {
@@ -357,6 +365,7 @@ function clear () {
     varBText = "";
     result = "";
     isMinus = false;
+    isError = false;
     negative.textContent = "";
     eventFire = false;
     currentOperator = "";
@@ -374,6 +383,8 @@ function clear () {
         item.addEventListener("click", addExponent);
         item.style.backgroundColor = null;
     });
+    decimalButton.addEventListener("click", addDecimal);
+    decimalButton.style.backgroundColor = null;
 }
 clearAll.addEventListener("click", clear);
 
@@ -395,7 +406,6 @@ function erase () {
     }
     if (isError) {
         clear();
-        isError = false;
     }
 }
 eraseButton.addEventListener("click", erase);
@@ -406,7 +416,6 @@ function clearEntry () {
     currentNumber.textContent = "0"
     if (isError) {
         clear();
-        isError = false;
     }
 }
 
