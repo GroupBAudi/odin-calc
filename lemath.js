@@ -64,6 +64,7 @@ function inputNumber (event) {
 
         for (let i in numbers) {
             if (currentNumber.textContent === "0" && event.target.id !== "negate") {
+                console.log("test");
                 currentNumber.textContent = ""; // for the sake of changing the number from 0 to any
             }
             if (event.target.id == numbers[i]) {
@@ -213,7 +214,8 @@ function operate (event) {
 
 opButton.forEach((item) => {
     item.addEventListener("click", operate);
-})
+});
+
 
 let exponent = document.querySelectorAll(".exponent");
 let chosenExponent = "";
