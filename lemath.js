@@ -27,41 +27,12 @@ let isError = false; // for errors such as divide by 0
 
 // select the section with the numbers
 function inputNumber (event) {
-    const condition = event.target.id !== "";
-    const isNotDot = event.target.id !== "dot";
-    const isNotOpButton = event.target.className !== "calc-button operation-button"; // optimize this late;
+    const condition = event.target.className === "calc-button"
 
     const numbers = [0,1,2,3,4,5,6,7,8,9];
 
     // negate function
-    if (condition && isNotDot && isNotOpButton) { // prevents inputting other than the numbers
-        // to do
-        if (event.target.id === "negate") { // selects only the negate button
-            if (currentNumber.textContent === "0") {
-                console.error("intentional error"); 
-            } else {
-                if (!isMinus) {
-                    negative.textContent = "-";
-                    if (!hasTyped) {
-                        varB = parseFloat(varACopy);
-                        varBText = `negate(${varB})`
-                        currentNumber.textContent = parseFloat(varACopy);
-                        numberHistory.textContent = varAText + " " + chosenOperator + " " + varBText;
-                    }
-                    isMinus = true;
-                } else {
-                    negative.textContent = "";
-                    if (!hasTyped) {
-                        varB = parseFloat(varACopy);
-                        varBText = `negate(${varB})`
-                        currentNumber.textContent = parseFloat(varACopy) * -1;
-                        numberHistory.textContent = varAText + " " + chosenOperator + " " + varBText;
-                    }
-                    isMinus = false;
-                }
-            }
-        }
-        
+    if (condition) { // prevents inputting other than the numbers
         for (let i in numbers) {
             if (event.target.id == numbers[i]) {
                 if (currentNumber.textContent === "0" && event.target.id !== "negate") {
@@ -95,6 +66,42 @@ function inputNumber (event) {
     }
 }
 
+const negateButton = document.querySelector(".negate-button");
+
+function negateNumber () {
+    if (currentNumber.textContent === "0") {
+        console.error("intentional error"); 
+    } else {
+        if (!isMinus) {
+            negative.textContent = "-";
+            if (!eventFire) {
+                varA = varACopy = varAText = negative.textContent + currentNumber.textContent;
+            } else {
+                varB = varBText = negative.textContent + currentNumber.textContent;
+            }
+            if (!hasTyped) {
+                varB = varBText = -parseFloat(varACopy);
+                placeHolderNumber.textContent = parseFloat(-varB);
+            }
+            isMinus = true;
+        } else {
+            negative.textContent = "";
+            if (!eventFire) {
+                varA = varACopy = varAText = negative.textContent + currentNumber.textContent;
+            } else {
+                varB = varBText = negative.textContent + currentNumber.textContent;
+            }
+            if (!hasTyped) {
+                varB = varBText = -parseFloat(varACopy);
+                placeHolderNumber.textContent = parseFloat(varB);
+            }
+            isMinus = false;
+        }
+    }
+}
+
+negateButton.addEventListener("click", negateNumber);
+
 const decimalButton = document.querySelector(".decimal-button");
 
 function addDecimal () {
@@ -121,7 +128,6 @@ let isMinus = false; // for the negate
 function operate (event) {
     const condition = event.target.id !== "";
     const operatorsArr = ["+", "-", "/", "x"];
-
     hasTyped = false;
     if (condition) {
         for (let i in operatorsArr) {
@@ -179,7 +185,7 @@ function operate (event) {
                                 result = a / b;
                             }
                             break;
-                        }
+                    }
                     varA = result;
                     varAText = result;
                     varB = "";
@@ -213,6 +219,8 @@ function error() {
     });
     decimalButton.removeEventListener("click", addDecimal);
     decimalButton.style.backgroundColor = "#242424";
+    negateButton.removeEventListener("click", negateNumber);
+    negateButton.style.backgroundColor = "#242424";
 }
 
 let exponent = document.querySelectorAll(".exponent");
@@ -314,18 +322,8 @@ function evaluate () {
                 break;
             case "/":
                 if (b === 0) {
-                    opButton.forEach(item => {
-                        item.removeEventListener("click", operate);
-                        item.style.backgroundColor = "#242424";
-                    });
-                    evaluateButton.removeEventListener("click", evaluate);
-                    exponent.forEach(item => {
-                        item.removeEventListener("click", addExponent);
-                        item.style.backgroundColor = "#242424";
-                    });
-    
+                    error();
                     b = 0;
-    
                     isError = true;
                 } else {
                     result = a / b;
@@ -385,6 +383,8 @@ function clear () {
     });
     decimalButton.addEventListener("click", addDecimal);
     decimalButton.style.backgroundColor = null;
+    negateButton.addEventListener("click", negateNumber);
+    negateButton.style.backgroundColor = null;
 }
 clearAll.addEventListener("click", clear);
 
@@ -397,12 +397,9 @@ function erase () {
         currentNumber.textContent = "0";
     }
     if (!eventFire) {
-        varA = negative.textContent + currentNumber.textContent;
-        varACopy = negative.textContent + currentNumber.textContent;
-        varAText = negative.textContent + currentNumber.textContent;
+        varA = varACopy = varAText = negative.textContent + currentNumber.textContent;
     } else {
-        varB = negative.textContent + currentNumber.textContent;
-        varBText = negative.textContent + currentNumber.textContent;
+        varB = varBText = negative.textContent + currentNumber.textContent;
     }
     if (isError) {
         clear();
