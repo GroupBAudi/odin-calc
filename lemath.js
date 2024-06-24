@@ -330,7 +330,6 @@ function evaluate () {
                 }
                 break;
         }
-        
         varA = result;
         placeHolderNumber.textContent = varA;
         
@@ -344,8 +343,10 @@ function evaluate () {
 
     }
     else if (varB === "") {
+        if (varA === "") {
+            a = 0;
+        }
         numberHistory.textContent = a + " " + "=";
-
     }
 }
 
@@ -371,6 +372,7 @@ function clear () {
     currentNumber.textContent = "0";
     numberHistory.textContent = "";
     placeHolderNumber.textContent = "";
+    // resets all the blacked out buttons' style and clickable
     placeHolderNumber.replaceWith(currentNumber);
     opButton.forEach(item => {
         item.addEventListener("click", operate);
