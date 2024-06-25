@@ -11,6 +11,10 @@ let varB = "";
 // select all the buttons
 const numButtons = document.querySelector(".numbers-buttons");
 
+// select status bar for displaying what kind of error
+
+let statusBar = document.querySelector(".status");
+
 // certain goofy conditions and variables
 let eventFire = false;
 let placeHolderNumber = document.createElement("h1");
@@ -40,8 +44,10 @@ function inputNumber (event) {
                 }
                 currentNumber.textContent += event.target.id;
                 if (currentNumber.textContent.length > 15) { // set maximum length
-                    console.log("stahp");
                     numButtons.removeEventListener("click", inputNumber)
+                    statusBar.textContent = "Max length of 15 reached"
+                } else if (currentNumber.textContent.length < 15) {
+                    statusBar.textContent = "";
                 }
             }
             if (isError) { // if any error is encountered, should the user press any number, it will reset
@@ -52,7 +58,6 @@ function inputNumber (event) {
                 evalMode = false;
             }
             if (!hasTyped) {
-                isMinus = false;
                 hasTyped = true;
             }
         }
@@ -129,6 +134,10 @@ function operate (event) {
     const condition = event.target.id !== "";
     const operatorsArr = ["+", "-", "/", "x"];
     hasTyped = false;
+
+    statusBar.textContent = "";
+    numButtons.addEventListener("click", inputNumber); // if exceed 15 and after pressing any operate button
+
     if (condition) {
         for (let i in operatorsArr) {
             decimalButton.addEventListener("click", addDecimal);
@@ -175,7 +184,7 @@ function operate (event) {
                             break;
                         case "/":
                             if (b === 0) {
-                                error();
+                                error(1);
                                 numberHistory.textContent = varAText + " " + currentOperator + " " + varB + " " + chosenOperator + " ";
                                 placeHolderNumber.textContent = "Can't divide by zero";
                                 currentNumber.replaceWith(placeHolderNumber);
@@ -185,6 +194,9 @@ function operate (event) {
                                 result = a / b;
                             }
                             break;
+                    }
+                    if (result === Infinity) {
+                        error(2);
                     }
                     varA = result;
                     varAText = result;
@@ -207,7 +219,8 @@ opButton.forEach((item) => {
     item.addEventListener("click", operate);
 });
 
-function error() {
+function error(code) {
+
     opButton.forEach(item => {
         item.removeEventListener("click", operate);
         item.style.backgroundColor = "#242424";
@@ -221,6 +234,15 @@ function error() {
     decimalButton.style.backgroundColor = "#242424";
     negateButton.removeEventListener("click", negateNumber);
     negateButton.style.backgroundColor = "#242424";
+    
+    switch (code) {
+        case 1:
+            statusBar.textContent = "Error 1 Can't divide by 0";
+            break;
+        case 2:
+            statusBar.textContent = "Error 2 Overflow, usually number too large";
+            break;
+    }
 }
 
 let exponent = document.querySelectorAll(".exponent");
@@ -243,6 +265,9 @@ function addExponent (event) {
                     case "sqr":
                         varAText = `sqr(${varA})`;
                         varACopy = varA = Math.pow(varA, 2);
+                        if  (varA === Infinity) {
+                            error(2);
+                        }
                         break;
                     case "sqrt":
                         varAText = `sqrt(${varA})`
@@ -252,7 +277,7 @@ function addExponent (event) {
                         varAText = `1/${varA}`;
                         varACopy = varA = 1 / varA;
                         if (currentNumber.textContent === "0") {
-                            error();
+                            error(1);
                             isError = true;
                         }
                         break;
@@ -265,7 +290,7 @@ function addExponent (event) {
             }
             else if (eventFire) {
                 if (varB === "") {
-                    varB = varACopy;
+                    varB = varA;
                 }
                 switch (chosenExponent) {   
                     case "sqr":
@@ -279,6 +304,10 @@ function addExponent (event) {
                     case "1/x":
                         varBText = `1/${varB}`;
                         varB = 1 / varB;
+                        if (currentNumber.textContent === "0") {
+                            error(1);
+                            isError = true;
+                        }
                         break;
                 }
                 placeHolderNumber.textContent = varB;
@@ -322,13 +351,16 @@ function evaluate () {
                 break;
             case "/":
                 if (b === 0) {
-                    error();
+                    error(1);
                     b = 0;
                     isError = true;
                 } else {
                     result = a / b;
                 }
                 break;
+        }
+        if (result === Infinity) {
+            error(2);
         }
         varA = result;
         placeHolderNumber.textContent = varA;
@@ -372,6 +404,8 @@ function clear () {
     currentNumber.textContent = "0";
     numberHistory.textContent = "";
     placeHolderNumber.textContent = "";
+    numButtons.addEventListener("click", inputNumber);
+    statusBar.textContent = "";
     // resets all the blacked out buttons' style and clickable
     placeHolderNumber.replaceWith(currentNumber);
     opButton.forEach(item => {
@@ -406,6 +440,8 @@ function erase () {
     if (isError) {
         clear();
     }
+    numButtons.addEventListener("click", inputNumber);
+    statusBar.textContent = "";
 }
 eraseButton.addEventListener("click", erase);
 
