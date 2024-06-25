@@ -9,4 +9,6 @@ Did you encounter any bug? Please tell me in the comments so I can stop further 
 Useless trivia: 
 - It took me 3 months to create this thing, mostly because of my work and college final test
 - This looks like Windows 10 default calculator layout, but has no 'memory' because I don't understand it even though I regularly use calculator in my work.
+- The brand OSC-15 means Odin Simple Calculator 15 maximum length. It sounds lame for a huge coding education community.
 
+I hope you find this 'calculator' at the very least inspiring to be an example on how NOT to create a calculator. Thank you for your time to view this!
